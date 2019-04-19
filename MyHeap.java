@@ -8,10 +8,13 @@ public class MyHeap {
     int i = index;
     // not at a leaf
     while (child1 < size && child2 < size) {
+    //  System.out.println(child1+" " + child2+" "+i);
       // none of the children are larger
       if (data[child1] <= data[i] && data[child2] <= data[i]) {
-        child1 = size + 1; // will end while loop
+      //  System.out.println("a");
+        i = size + 1; // will end while loop
       } else if (data[child1] > data[i] && data[child2] > data[i]) {
+      //  System.out.println("b");
         // if both are larger
         if (data[child1] >= data[child2]) {
           swap(data, i, child1);
@@ -21,9 +24,11 @@ public class MyHeap {
           i = child2;
         }
       } else if (data[child1] >= data[i]) {
+      //  System.out.println("c");
         swap(data, i, child1);
         i = child1;
       } else {
+    //    System.out.println("d");
         swap(data, i, child2);
         i = child2;
       }
@@ -50,8 +55,23 @@ public class MyHeap {
     }
   }
 
-  public static void heapify(int[] data) {
+  private static int powerOf2(int n) {
+    int result = 1;
+    while (result*2 <= n) {
+      result *= 2;
+      //System.out.println(result+" "+n);
+    }
+    return result;
+  }
 
+  public static void heapify(int[] data) {
+    int start = powerOf2(data.length);
+  //  System.out.println("Start: "+start);
+    for (int i = start; i >= 0; i--) {
+      System.out.println(i + ": " + Arrays.toString(data));
+      pushDown(data, data.length, i);
+      System.out.println("Done");
+    }
   }
 
   public static void heapsort(int[] data) {
@@ -59,9 +79,10 @@ public class MyHeap {
   }
 
   public static void main(String[] args) {
-    int[] data = new int[] { 3, 10, 4, 5, 5, 8 };
-  //  MyHeap.pushDown(data, 6, 0);
-    MyHeap.pushUp(data, 5);
+    int[] data = new int[] { 9, 5, 8, 2, 4, 6, 0 };
+    MyHeap.pushDown(data, data.length, 2);
+  //  MyHeap.pushUp(data, 5);
+  //  MyHeap.heapify(data);
     System.out.println(Arrays.toString(data));
   }
 }
