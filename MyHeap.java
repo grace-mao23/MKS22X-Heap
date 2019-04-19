@@ -68,9 +68,9 @@ public class MyHeap {
     int start = powerOf2(data.length);
   //  System.out.println("Start: "+start);
     for (int i = start; i >= 0; i--) {
-      System.out.println(i + ": " + Arrays.toString(data));
+      //System.out.println(i + ": " + Arrays.toString(data));
       pushDown(data, data.length, i);
-      System.out.println("Done");
+    //  System.out.println("Done");
     }
   }
 
@@ -79,10 +79,10 @@ public class MyHeap {
   }
 
   public static void main(String[] args) {
-    int[] data = new int[] { 9, 5, 8, 2, 4, 6, 0 };
-    MyHeap.pushDown(data, data.length, 2);
+    int[] data = new int[] { 6,4,3,8,6,6,6,6,9,1,1,2 };
+  //  MyHeap.pushDown(data, data.length, 2);
   //  MyHeap.pushUp(data, 5);
-  //  MyHeap.heapify(data);
+    MyHeap.heapify(data);
     System.out.println(Arrays.toString(data));
   }
 }
