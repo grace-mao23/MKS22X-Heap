@@ -13,14 +13,14 @@ public class MyHeap {
         child1 = size + 1; // will end while loop
       } else if (data[child1] > data[i] && data[child2] > data[i]) {
         // if both are larger
-        if (data[child1] > data[child2]) {
+        if (data[child1] >= data[child2]) {
           swap(data, i, child1);
           i = child1;
         } else {
           swap(data, i, child2);
           i = child2;
         }
-      } else if (data[child1] > data[i]) {
+      } else if (data[child1] >= data[i]) {
         swap(data, i, child1);
         i = child1;
       } else {
@@ -39,7 +39,15 @@ public class MyHeap {
   }
 
   private static void pushUp(int[]data,int index) {
-
+    int parent = (index-1) / 2;
+    int i = index;
+    while (i != 0) {
+      if (data[parent] < data[i]) {
+        swap(data, i, parent);
+        i = parent;
+      }
+      parent = (i-1) / 2;
+    }
   }
 
   public static void heapify(int[] data) {
@@ -51,8 +59,9 @@ public class MyHeap {
   }
 
   public static void main(String[] args) {
-    int[] data = new int[] { 3, 10, 8, 5, 2, 4 };
-    MyHeap.pushDown(data, 6, 0);
+    int[] data = new int[] { 3, 10, 4, 5, 5, 8 };
+  //  MyHeap.pushDown(data, 6, 0);
+    MyHeap.pushUp(data, 5);
     System.out.println(Arrays.toString(data));
   }
 }
