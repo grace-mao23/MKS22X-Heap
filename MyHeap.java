@@ -7,11 +7,17 @@ public class MyHeap {
     int child2 = index * 2 + 2;
     int i = index;
     // not at a leaf
-    while (child1 < size && child2 < size) {
-    //  System.out.println(child1+" " + child2+" "+i);
-      // none of the children are larger
-      if (data[child1] <= data[i] && data[child2] <= data[i]) {
-      //  System.out.println("a");
+    while (child1 < size || child2 < size) {
+      if (child2 >= size) {
+      //  System.out.println("z");
+        if (data[child1] > data[i]) {
+          swap(data, i, child1);
+          i = child1;
+        } else {
+          i = size+1;
+        }
+      } else if (data[child1] <= data[i] && data[child2] <= data[i]) {
+    //    System.out.println("a");
         i = size + 1; // will end while loop
       } else if (data[child1] > data[i] && data[child2] > data[i]) {
       //  System.out.println("b");
@@ -24,11 +30,11 @@ public class MyHeap {
           i = child2;
         }
       } else if (data[child1] >= data[i]) {
-      //  System.out.println("c");
+    //    System.out.println("c");
         swap(data, i, child1);
         i = child1;
       } else {
-    //    System.out.println("d");
+      //  System.out.println("d");
         swap(data, i, child2);
         i = child2;
       }
@@ -66,16 +72,24 @@ public class MyHeap {
 
   public static void heapify(int[] data) {
     int start = powerOf2(data.length);
-  //  System.out.println("Start: "+start);
+//    System.out.println("Start: "+start);
     for (int i = start; i >= 0; i--) {
-      //System.out.println(i + ": " + Arrays.toString(data));
+  //    System.out.println(i + ": " + Arrays.toString(data));
       pushDown(data, data.length, i);
     //  System.out.println("Done");
     }
   }
 
   public static void heapsort(int[] data) {
-
+    heapify(data);
+    int end = data.length;
+    while (end != 1) {
+      swap(data, 0, end - 1);
+    //  System.out.println(Arrays.toString(data)+ " " + end + "!");
+      end--;
+      pushDown(data, end, 0);
+    //  System.out.println(Arrays.toString(data) + " " + end);
+    }
   }
 
   public static void main(String[] args) {
@@ -83,6 +97,8 @@ public class MyHeap {
   //  MyHeap.pushDown(data, data.length, 2);
   //  MyHeap.pushUp(data, 5);
     MyHeap.heapify(data);
+    System.out.println(Arrays.toString(data));
+    MyHeap.heapsort(data);
     System.out.println(Arrays.toString(data));
   }
 }
