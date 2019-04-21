@@ -3,43 +3,31 @@ import java.util.*;
 public class MyHeap {
 
   private static void pushDown(int[]data,int size,int index) {
-    int child1 = index * 2 + 1;
-    int child2 = index * 2 + 2;
-    int i = index;
+    boolean done = false;
     // not at a leaf
-    while (child1 < size || child2 < size) {
-      if (child2 >= size) {
-      //  System.out.println("z");
-        if (data[child1] > data[i]) {
-          swap(data, i, child1);
-          i = child1;
-        } else {
-          i = size+1;
-        }
-      } else if (data[child1] <= data[i] && data[child2] <= data[i]) {
-    //    System.out.println("a");
-        i = size + 1; // will end while loop
-      } else if (data[child1] > data[i] && data[child2] > data[i]) {
-      //  System.out.println("b");
-        // if both are larger
-        if (data[child1] >= data[child2]) {
-          swap(data, i, child1);
-          i = child1;
-        } else {
-          swap(data, i, child2);
-          i = child2;
-        }
-      } else if (data[child1] >= data[i]) {
-    //    System.out.println("c");
-        swap(data, i, child1);
-        i = child1;
+    while (!done) {
+      int child1 = index * 2 + 1;
+      int child2 = index * 2 + 2;
+      if (child1 >= size && child2 >= size) {
+        done = true;
       } else {
-      //  System.out.println("d");
-        swap(data, i, child2);
-        i = child2;
+        int max = data[index];
+        if (child1 < size) {
+          max = Math.max(max, data[child1]);
+        }
+        if (child2 < size) {
+          max = Math.max(max, data[child2]);
+        }
+        if (max == data[index]) {
+          done = true;
+        } else if (child1 < size && max == data[child1]) {
+          swap(data, child1, index);
+          index = child1;
+        } else {
+          swap(data, child2, index);
+          index = child2;
+        }
       }
-      child1 = i * 2 + 1;
-      child2 = i * 2 + 2;
     }
   }
 
@@ -50,30 +38,26 @@ public class MyHeap {
   }
 
   private static void pushUp(int[]data,int index) {
-    int parent = (index-1) / 2;
-    int i = index;
-    while (i != 0) {
-      if (data[parent] < data[i]) {
-        swap(data, i, parent);
-        i = parent;
+    boolean done = false;
+    while (!done) {
+      int parent = (index - 1) / 2;
+      if (parent < 0) {
+        done = true;
+      } else {
+        if (data[index] > data[parent]) {
+          swap(data, parent, index);
+          index = parent;
+        } else {
+          done = true;
+        }
       }
-      parent = (i-1) / 2;
     }
-  }
-
-  private static int powerOf2(int n) {
-    int result = 1;
-    while (result*2 <= n) {
-      result *= 2;
-      //System.out.println(result+" "+n);
-    }
-    return result;
   }
 
   public static void heapify(int[] data) {
-    int start = powerOf2(data.length);
+    int start = (int)(Math.log(data.length)/Math.log(2.0));
 //    System.out.println("Start: "+start);
-    for (int i = start; i >= 0; i--) {
+    for (int i = (int)(Math.pow(2,start)) - 2; i >= 0; i--) {
   //    System.out.println(i + ": " + Arrays.toString(data));
       pushDown(data, data.length, i);
     //  System.out.println("Done");
@@ -82,17 +66,17 @@ public class MyHeap {
 
   public static void heapsort(int[] data) {
     heapify(data);
-    int end = data.length;
-    while (end != 1) {
-      swap(data, 0, end - 1);
+    int end = data.length - 1;
+    while (end > 0) {
+      swap(data, 0, end);
     //  System.out.println(Arrays.toString(data)+ " " + end + "!");
-      end--;
       pushDown(data, end, 0);
+      end--;
     //  System.out.println(Arrays.toString(data) + " " + end);
     }
   }
 
-  public static void main(String[] args) {
+  /*public static void main(String[] args) {
     int[] data = new int[] { 6,4,3,8,6,6,6,6,9,1,1,2 };
   //  MyHeap.pushDown(data, data.length, 2);
   //  MyHeap.pushUp(data, 5);
@@ -100,5 +84,42 @@ public class MyHeap {
     System.out.println(Arrays.toString(data));
     MyHeap.heapsort(data);
     System.out.println(Arrays.toString(data));
+  } */
+  public static void main(String[]args){
+    System.out.println("Size\t\tMax Value\tquick/builtin ratio ");
+    int[]MAX_LIST = {1000000000,500,10};
+    for(int MAX : MAX_LIST){
+      for(int size = 31250; size < 2000001; size*=2){
+        long qtime=0;
+        long btime=0;
+        //average of 5 sorts.
+        for(int trial = 0 ; trial <=5; trial++){
+          int []data1 = new int[size];
+          int []data2 = new int[size];
+          for(int i = 0; i < data1.length; i++){
+            data1[i] = (int)(Math.random()*MAX);
+            data2[i] = data1[i];
+          }
+          long t1,t2;
+          t1 = System.currentTimeMillis();
+          MyHeap.heapsort(data2);
+          t2 = System.currentTimeMillis();
+          qtime += t2 - t1;
+          t1 = System.currentTimeMillis();
+          Arrays.sort(data1);
+          t2 = System.currentTimeMillis();
+          btime+= t2 - t1;
+          if(!Arrays.equals(data1,data2)){
+            System.out.println("FAIL TO SORT!");
+            System.exit(0);
+          }
+        }
+        System.out.println(size +"\t\t"+MAX+"\t"+1.0*qtime/btime);
+      }
+      System.out.println();
+    }
   }
+
+
+
 }
